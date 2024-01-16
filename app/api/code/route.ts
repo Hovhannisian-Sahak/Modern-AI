@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
+import { increaseApiLimit, checkApiLimit } from "@/lib/api-limit";
 require("dotenv").config();
 const config = new Configuration({
   organization: process.env.OPENAI_ORGANIZATION,
@@ -31,10 +32,18 @@ export async function POST(req: Request) {
     if (!messages) {
       return new NextResponse("messages are required", { status: 400 });
     }
+    const freeTrial = await checkApiLimit();
+    if (!freeTrial) {
+      return new NextResponse(
+        "You have exceeded your API limit for the free tier",
+        { status: 403 }
+      );
+    }
     const response = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: [instructionMessage, ...messages],
     });
+    await increaseApiLimit();
     console.log(response);
     return NextResponse.json(response.data.choices[0].message);
   } catch (error) {

@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useProModal } from "@/hooks/use-pro-modal";
 import { Input } from "@/components/ui/input";
 import { formSchema } from "./constants";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
@@ -18,7 +19,9 @@ import { cn } from "@/lib/utils";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
 import ReactMarkdown from "react-markdown";
+import toast from "react-hot-toast";
 const CodePage = () => {
+  const proModal = useProModal()
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
   const router = useRouter();
   console.log(messages);
@@ -36,14 +39,21 @@ const CodePage = () => {
         content: values.prompt,
       };
       const newMessages = [...messages, userMessage];
+      console.log(values);
+      console.log(messages);
+      console.log(newMessages);
       const res = await axios.post("/api/code", {
         messages: newMessages,
       });
       console.log(res);
       setMessages((cur) => [...cur, userMessage, res.data]);
       form.reset();
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      } else {
+        toast.error("Something went wrong");
+      }
     } finally {
       router.refresh();
     }

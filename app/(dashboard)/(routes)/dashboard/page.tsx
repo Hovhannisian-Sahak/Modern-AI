@@ -7,6 +7,7 @@ import {
   ImageIcon,
   MessageSquare,
   Music,
+  VideoIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -35,7 +36,7 @@ const tools = [
   },
   {
     label: "Video Generation",
-    icon: ImageIcon,
+    icon: VideoIcon,
     color: "text-orange-700",
     bgColor: "text-orange-700/10",
     href: "/video",

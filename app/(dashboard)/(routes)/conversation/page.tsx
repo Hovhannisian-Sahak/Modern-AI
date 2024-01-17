@@ -17,7 +17,10 @@ import { Loader } from "@/components/loader";
 import { cn } from "@/lib/utils";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
+import { useProModal } from "@/hooks/use-pro-modal";
+import toast from "react-hot-toast";
 const ConversationPage = () => {
+  const proModal = useProModal();
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
   const router = useRouter();
   console.log(messages);
@@ -41,7 +44,12 @@ const ConversationPage = () => {
       console.log(res);
       setMessages((cur) => [...cur, userMessage, res.data]);
       form.reset();
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      } else {
+        toast.error("Something went wrong");
+      }
       console.log(error);
     } finally {
       router.refresh();

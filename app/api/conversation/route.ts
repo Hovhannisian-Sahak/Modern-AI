@@ -6,7 +6,6 @@ import { increaseApiLimit, checkApiLimit } from "@/lib/api-limit";
 import { checkSubscription } from "@/lib/subscription";
 require("dotenv").config();
 const configuration = new Configuration({
-  organization: process.env.OPENAI_ORGANIZATION,
   apiKey: process.env.OPENAI_API_KEY,
 });
 console.log(process.env.OPENAI_ORGANIZATION);

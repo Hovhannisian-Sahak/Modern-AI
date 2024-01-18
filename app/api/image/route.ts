@@ -5,7 +5,6 @@ import { NextResponse } from "next/server";
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
 require("dotenv").config();
 const config = new Configuration({
-  organization: process.env.OPENAI_ORGANIZATION,
   apiKey: process.env.OPENAI_API_KEY,
 });
 console.log(process.env.OPENAI_ORGANIZATION);
